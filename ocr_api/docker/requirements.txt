@@ -1,0 +1,8 @@
+dependency_injector==4.37.0
+fastapi==0.70.0
+numpy==1.21.4
+opencv_python==4.5.4.60
+pydantic==1.8.2
+pytesseract==0.3.8
+starlette==0.16.0
+uvicorn==0.15.0
