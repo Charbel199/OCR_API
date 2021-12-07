@@ -7,6 +7,7 @@ from sys import platform
 from shared.helpers.image_formatter import from_bytes_to_np_array, from_np_array_to_bytes
 from typing import List
 from domain.models.character_info import CharacterInfo
+from domain.exceptions.image_exception import ImageNotValid
 
 # Windows testing only
 if platform == 'win32':
@@ -26,34 +27,40 @@ class CharacterExtractorService(AbstractCharacterExtractorService):
         return characters_info
 
     def get_characters_info(self, image: str) -> str:
-        # Get image from endpoint
-        image_np = from_bytes_to_np_array(image)
+        try:
+            # Get image from endpoint
+            image_np = from_bytes_to_np_array(image)
 
-        # Get content from image
-        content = pytesseract.image_to_string(image_np)
-        # Format content if necessary
+            # Get content from image
+            content = pytesseract.image_to_string(image_np)
+            # Format content if necessary
 
-        return content
+            return content
+        except Exception:
+            raise ImageNotValid()
 
     def get_characters_bounding_boxes(self, image: str) -> io.BytesIO:
-        # Get image from endpoint
-        image_np = from_bytes_to_np_array(image)
-        height, width, _ = image_np.shape
+        try:
+            # Get image from endpoint
+            image_np = from_bytes_to_np_array(image)
+            height, width, _ = image_np.shape
 
-        # Get necessary coordinates
-        characters_info = self._get_character_coordinates(image_np)
+            # Get necessary coordinates
+            characters_info = self._get_character_coordinates(image_np)
 
-        # Draw bounding boxes
-        for character_info in characters_info:
-            cv2.rectangle(image_np, (character_info.x, height - character_info.y),
-                          (character_info.w, height - character_info.h), (255, 0, 255), 1)
-            cv2.putText(image_np, character_info.character,
-                        (character_info.x, height - character_info.y + 30),
-                        cv2.FONT_HERSHEY_PLAIN,
-                        2,
-                        (255, 0, 255),
-                        1,
-                        cv2.LINE_AA)
-        image_bytes = from_np_array_to_bytes(image_np)
+            # Draw bounding boxes
+            for character_info in characters_info:
+                cv2.rectangle(image_np, (character_info.x, height - character_info.y),
+                              (character_info.w, height - character_info.h), (255, 0, 255), 1)
+                cv2.putText(image_np, character_info.character,
+                            (character_info.x, height - character_info.y + 30),
+                            cv2.FONT_HERSHEY_PLAIN,
+                            2,
+                            (255, 0, 255),
+                            1,
+                            cv2.LINE_AA)
+            image_bytes = from_np_array_to_bytes(image_np)
 
-        return image_bytes
+            return image_bytes
+        except Exception:
+            raise ImageNotValid()
