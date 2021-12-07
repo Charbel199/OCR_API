@@ -7,8 +7,6 @@ from api.controllers import ocr_controller, health_check_controller
 app = FastAPI(version='2.0', title='OCR Character Extractor',
               description="API for extracting characters from an image")
 
-# app.mount("/models_services", StaticFiles(directory="/checkpoints/servable"), name="models_services")
-
 app.add_middleware(CORSMiddleware,
                    allow_origins=["*"],
                    allow_credentials=True,

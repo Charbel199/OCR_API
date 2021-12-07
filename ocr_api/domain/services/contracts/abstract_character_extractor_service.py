@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod, ABCMeta
 import io
 
+
 class AbstractCharacterExtractorService(ABC):
     __metaclass__ = ABCMeta
 
